@@ -60,12 +60,32 @@ app.addMessage = function(messages){
   timerID = setTimeout(function(){app.fetch()},10000);
 };
 
+// app.send = function(message){
+//   // var data = {
+//   //   username: this.settings.username,
+//   //   text: message,
+//   //   roomname: this.settings.roomName
+//   // };
+//   console.log(message);
+//   $.ajax({
+//     // always use this url
+//     url: app.server + 'classes/messages',
+//     type: 'POST',
+//     data: JSON.stringify(message),
+//     contentType: 'application/json',
+//     success: function (data) {
+//       console.log('chatterbox: Message sent');
+//     },
+//     error: function (data) {
+//       // see: https://developer.mozilla.org/en-US/docs/Web/API/console.error
+//       console.error('chatterbox: Failed to send message');
+//     }
+//   });
+// };
+//
 app.send = function(message){
-  // var data = {
-  //   username: this.settings.username,
-  //   text: message,
-  //   roomname: this.settings.roomName
-  // };
+  message.roomID = 1;
+  message.userID = 1;
   console.log(message);
   $.ajax({
     // always use this url
@@ -93,6 +113,8 @@ app.sendUsername = function(username){
     contentType: 'application/json',
     success: function (data) {
       console.log('chatterbox: username received');
+      app.settings.userID = data.id;
+      console.log(typeof data);
     },
     error: function (data) {
       // see: https://developer.mozilla.org/en-US/docs/Web/API/console.error
@@ -125,6 +147,7 @@ app.settings = {
   friends: [],
   roomName: 'lobby',
   username: 'Anonymous',
+  userID: null,
   lastMessageReceived: null,
   alreadyReceived: [],
   lastTimeStampReceived: null,

@@ -19,11 +19,24 @@ var database = mysql.createConnection({
 
 // connection.end();
 
-
 module.exports = {
   messages: {
-    get: function (req, res) {console.log('message get request: ' + req.body)}, // a function which handles a get request for all messages
-    post: function (req, res) {console.log('message post request: ' + req.body)} // a function which handles posting a message to the database
+    get: function (req, res) {
+      database.query('SELECT * from messages',function(err,rows){
+        if (err) throw err;
+        else res.status(200).json(rows).send();
+      });
+    console.log('message get request: ' + req.body)
+    }, // a function which handles a get request for all messages
+    post: function (req, res) {
+      var message = req.body;
+      var inserts = 'INSERT into messages (user,room,date,text,crypto) values(?,?,?,?,?);';
+      var variables = [message.userID,message.roomID,Date.now(),message.text,(message.crypto ? 1:0)];
+      var inserts = mysql.format(inserts,variables);
+      database.query(inserts);
+      res.status(201).send('Message created.');
+    // console.log('message post request: ' + req.body)
+    } // a function which handles posting a message to the database
   },
 
   users: {
@@ -33,7 +46,10 @@ module.exports = {
       console.log('user post request: ' + req.body.name);
       database.query('INSERT into users (name) values("' + req.body.name + '");',function(err,result){
         if (err) throw err;
-        else res.status(201).send('Created username ' + req.body.name + ' with ID ' + result.insertId);
+        else{
+          var response = {id:result.insertId};
+          res.status(201).json(response).send();
+        }
       });
     }
 
