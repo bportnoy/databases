@@ -7,7 +7,7 @@
 
 
 var app = {
-  server: 'http://127.0.0.1:3000/room/'
+  server: 'http://127.0.0.1:3000/'
 };
 
 app.fetch = function(number){
@@ -15,7 +15,7 @@ app.fetch = function(number){
     lastReceived: app.settings.lastTimeStampReceived};
     $.ajax({
       // always use this url
-      url: app.server + app.settings.roomName,
+      url: app.server + 'classes/messages',
       type: 'GET',
       contentType: 'application/json',
       data: options,
@@ -69,12 +69,30 @@ app.send = function(message){
   console.log(message);
   $.ajax({
     // always use this url
-    url: app.server + app.settings.roomName,
+    url: app.server + 'classes/messages',
     type: 'POST',
     data: JSON.stringify(message),
     contentType: 'application/json',
     success: function (data) {
       console.log('chatterbox: Message sent');
+    },
+    error: function (data) {
+      // see: https://developer.mozilla.org/en-US/docs/Web/API/console.error
+      console.error('chatterbox: Failed to send message');
+    }
+  });
+};
+
+app.sendUsername = function(username){
+  username = {name: username};
+  $.ajax({
+    // always use this url
+    url: app.server + 'classes/users',
+    type: 'POST',
+    data: JSON.stringify(username),
+    contentType: 'application/json',
+    success: function (data) {
+      console.log('chatterbox: username received');
     },
     error: function (data) {
       // see: https://developer.mozilla.org/en-US/docs/Web/API/console.error
